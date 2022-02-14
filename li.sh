@@ -89,7 +89,7 @@ if [[ $klk == "yes" || $klk == "Yes" || $klk == "YES" || $klk == "y" ]]; then
         echo -e "\nNumber of requests by domain:" ; find /usr/local/apache/domlogs/ -maxdepth 1 -type f|xargs grep $(date +%d/%b/%Y)|awk '{print $1}'|cut -d':' -f1|sort |uniq -c|sort -n|tail -n5; echo; echo "Number of POST requests by domain:";find /usr/local/apache/domlogs/ -maxdepth 1 -type f|xargs grep $(date +%d/%b/%Y)|grep POST|awk '{print $1}'|cut -d':' -f1|sort |uniq -c|sort -n|tail -n5;echo;echo "IP's with most requests:";find /usr/local/apache/domlogs/ -maxdepth 1 -type f|xargs grep $(date +%d/%b/%Y) |awk '{print $1}'|cut -d':' -f2|sort |uniq -c|sort -n|tail ;echo;echo "URLs with most requests:";find /usr/local/apache/domlogs/ -maxdepth 1 -type f|xargs grep $(date +%d/%b/%Y) |awk '{print $7}'|sort|uniq -c|sort -n | tail;echo;echo "IPs with most HTTP connections currently:";netstat -nt 2>/dev/null | egrep ':80|:443'| awk '{print $5}' | awk -F: 'BEGIN { OFS = ":"} {$(NF--)=""; print}' | awk '{print substr($0, 1, length($0)-1)}' | sort | uniq -c | sort -rn | head
 
         echo -e "\nIP's host:" && for each in `(find /usr/local/apache/domlogs/ -maxdepth 1 -type f|xargs grep $(date +%d/%b/%Y) |awk '{print $1}'|cut -d':' -f2|sort |uniq -c|sort -n|tail)| awk {'print $2'}`; do host $each; done
-        echo '') > $logfile
+        echo '') > $logfile 2> /dev/null
 
         #Yesterdays
         echo -e "\n-Want yesterday's stats?"
@@ -106,7 +106,7 @@ if [[ $klk == "yes" || $klk == "Yes" || $klk == "YES" || $klk == "y" ]]; then
         echo -e "\n-Yesterday's Disk I/O usage \n--:--:-- --       DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util"
         sar -d -f /var/log/sa/sa$date2| tail -n 35
         echo -e "\nYesterday's Disk I/O wait. \n00:00:01    CPU    %iowait"
-        sar -s -f /var/log/sa/sa$date2| awk '{ print $1"    " $2"    "$6 }'|tail -n 35) >> $logfile
+        sar -s -f /var/log/sa/sa$date2| awk '{ print $1"    " $2"    "$6 }'|tail -n 35) >> $logfile 2> /dev/null
 
 else
         echo "Ok, only today's."
